@@ -1,4 +1,4 @@
-#include <iosteam>
+#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -10,11 +10,14 @@ int main(){
     cin >> n;
 
     do{
-        div[i] = n % 2;
-    }while(din > 0)
-    
-    for(int j=0.;<i;j++){
-        cout << div[i] << endl;
+        div.push_back(n%2);
+        n = n/2;
+    }while(n > 0);
+     
+    // base binaria
+    for(int j= div.size()-1;j>=0;j--){
+        cout << div[j];
     }
 
+	return 0;
 }
