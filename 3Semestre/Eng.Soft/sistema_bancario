@@ -1,0 +1,140 @@
+
+@startuml
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 35
+skinparam ranksep 45
+skinparam defaultFontName Arial
+
+actor Cliente as C
+actor Administrador as A
+actor "Gateway de Pagamento" as GP
+actor "Serviço de Notificação" as SN
+
+rectangle "Sistema Bancário" {
+
+  package "1. Acesso e Segurança" {
+    usecase "Cadastrar conta" as cadastro
+    usecase "Realizar login" as login
+    usecase "Validar credenciais" as credenciais
+    usecase "Autenticar em duas etapas" as mfa
+    usecase "Recuperar senha" as recuperar
+    usecase "Alterar senha" as alterar
+    usecase "Validar identidade" as identidade
+  }
+
+  package "2. Conta e Consultas" {
+    usecase "Consultar saldo" as saldo
+    usecase "Consultar extrato" as extrato
+    usecase "Consultar dados da conta" as dados
+    usecase "Gerenciar perfil" as perfil
+  }
+
+  package "3. Transferências e Pagamentos" {
+    usecase "Realizar transferência" as transferencia
+    usecase "Realizar PIX" as pix
+    usecase "Pagar boleto" as boleto
+    usecase "Validar destinatário" as destinatario
+    usecase "Validar saldo e limite" as limite
+    usecase "Confirmar operação" as confirmar
+    usecase "Processar pagamento" as processar
+    usecase "Emitir comprovante" as comprovante
+  }
+
+  package "4. Cartões e Crédito" {
+    usecase "Gerenciar cartões" as cartoes
+    usecase "Consultar cartão" as consultarCartao
+    usecase "Bloquear cartão" as bloquearCartao
+    usecase "Solicitar cartão" as solicitarCartao
+    usecase "Solicitar empréstimo" as emprestimo
+    usecase "Analisar crédito" as credito
+    usecase "Consultar parcelas" as parcelas
+  }
+
+  package "5. Atendimento e Segurança" {
+    usecase "Gerenciar notificações" as notificacoes
+    usecase "Reportar fraude" as fraude
+    usecase "Contestar transação" as contestar
+    usecase "Solicitar atendimento" as atendimento
+  }
+
+  package "6. Administração" {
+    usecase "Gerenciar clientes" as clientes
+    usecase "Gerenciar contas" as contas
+    usecase "Definir limites" as limitesAdmin
+    usecase "Bloquear conta" as bloquearConta
+    usecase "Analisar suspeitas de fraude" as analisarFraude
+    usecase "Consultar auditoria" as auditoria
+  }
+}
+
+' Conexões do cliente: acesso e consultas
+C -- cadastro
+C -- login
+C -- recuperar
+C -- alterar
+C -- saldo
+C -- extrato
+C -- dados
+C -- perfil
+
+' Operações financeiras
+C -- transferencia
+C -- pix
+C -- boleto
+
+' Cartões e crédito
+C -- cartoes
+C -- solicitarCartao
+C -- emprestimo
+C -- parcelas
+
+' Atendimento
+C -- notificacoes
+C -- fraude
+C -- contestar
+C -- atendimento
+
+' Conexões do administrador
+A -- clientes
+A -- contas
+A -- limitesAdmin
+A -- bloquearConta
+A -- analisarFraude
+A -- auditoria
+
+' Serviços externos
+GP -- processar
+SN -- notificacoes
+
+' Inclusões obrigatórias
+cadastro ..> identidade : <<include>>
+login ..> credenciais : <<include>>
+recuperar ..> identidade : <<include>>
+
+transferencia ..> destinatario : <<include>>
+transferencia ..> limite : <<include>>
+transferencia ..> confirmar : <<include>>
+
+pix ..> destinatario : <<include>>
+pix ..> limite : <<include>>
+pix ..> confirmar : <<include>>
+
+boleto ..> limite : <<include>>
+boleto ..> processar : <<include>>
+emprestimo ..> credito : <<include>>
+
+' Extensões condicionais ou opcionais
+mfa ..> login : <<extend>>
+comprovante ..> transferencia : <<extend>>
+comprovante ..> pix : <<extend>>
+comprovante ..> boleto : <<extend>>
+bloquearCartao ..> cartoes : <<extend>>
+
+' Relações internas de módulos
+cartoes ..> consultarCartao : <<include>>
+
+@enduml
